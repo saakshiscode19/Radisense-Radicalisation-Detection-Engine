@@ -5,22 +5,14 @@
 # RadiSense
 ### *Leveraging RoBERTa-Based Transfer Learning for Explainable Tri-Class Radicalisation Detection in Social Media*
 
-[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://radisense-radicalisation-detection-engine-qnfr4yjtjs7p4mv6va3a.streamlit.app/)
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org/)
-[![HuggingFace](https://img.shields.io/badge/HuggingFace-Transformers-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/)
-[![License](https://img.shields.io/badge/License-MIT-2ecc71?style=for-the-badge)](LICENSE)
-
-<br/>
-
 > **An intelligent, explainable NLP system that automatically classifies social media content into**  
 > **Neutral · Non-Radical · Radical** — powered by fine-tuned RoBERTa and LIME explainability.
 
 <br/>
 
-| 🎯 Accuracy | 📊 Macro F1 | 🔵 ROC-AUC | 📦 Dataset | ⚡ Inference |
+| 🎯 Accuracy | 📊 Macro F1 | 🔵 ROC-AUC | 📦 Dataset | Presecision|
 |:-----------:|:-----------:|:----------:|:----------:|:------------:|
-| **95.68%** | **0.9555** | **0.9946** | **13,567 samples** | **~50ms/sample** |
+| **95.78%** | **95.62%** | **99.46%** | **13,567 samples** | **95.79%** |
 
 </div>
 
@@ -90,18 +82,8 @@ Paste any social media post, news headline, or text snippet and get:
 
 ## 🏗️ Model Architecture
 
-```
-INPUT TEXT  →  BPE Tokeniser (vocab: 50,265 | max_len: 128)
-            →  Token + Position Embeddings  (768-dim)
-            →  12 × Transformer Encoder Blocks
-                   ├── Multi-Head Self-Attention (12 heads)
-                   ├── Feed-Forward Network (3,072 hidden)
-                   └── LayerNorm + Residual
-            →  [CLS] Token Pooler  (768-dim → tanh)
-            →  Dropout (p=0.1)
-            →  Linear Classifier  (768 → 3)
-            →  Softmax  →  { Neutral | Non-Radical | Radical }
-```
+<img width="703" height="569" alt="image" src="https://github.com/user-attachments/assets/a65cab01-11aa-4508-b769-de9dc8b2289a" />
+
 
 ### Key Architectural Choices
 
@@ -161,32 +143,18 @@ Raw Text
 
 ## 📈 Results
 
-### RoBERTa Performance (Test Set — 2,035 samples)
+<img width="530" height="273" alt="image" src="https://github.com/user-attachments/assets/8ff6e443-e45e-4224-a71c-81c1bacccbe3" />
+<img width="1612" height="594" alt="image" src="https://github.com/user-attachments/assets/a473ffb8-d8cd-4ad0-a565-339f38ee0658" />
+<img width="1067" height="587" alt="image" src="https://github.com/user-attachments/assets/81491c0f-80d5-4a4e-8559-6c7c983c6a03" />
 
-| Class | Precision | Recall | F1-Score | Support |
-|-------|:---------:|:------:|:--------:|:-------:|
-| Neutral | 0.96 | 0.98 | **0.97** | 750 |
-| Non-Radical | 0.95 | 0.96 | **0.95** | 725 |
-| Radical (Combined) | 0.96 | 0.93 | **0.94** | 561 |
-| **Macro Average** | **0.957** | **0.954** | **0.9555** | 2,036 |
-
-**Overall Accuracy: 95.68% · ROC-AUC (Macro OvR): 0.9946**
-
-### ROC-AUC Per Class
-```
-Neutral      AUC = 0.998  ████████████████████████████████████████ ▌
-Non-Radical  AUC = 0.993  ████████████████████████████████████████
-Radical      AUC = 0.993  ████████████████████████████████████████
-```
 
 ### Comparison with Baselines
+<img width="879" height="118" alt="image" src="https://github.com/user-attachments/assets/7afdd53d-15de-488d-9d06-289facb262b2" />
+<img width="1908" height="711" alt="image" src="https://github.com/user-attachments/assets/8a6c9f07-d997-4444-83dc-4a99060d8aa9" />
 
-| Model | Type | Accuracy | F1-Macro | ROC-AUC |
-|-------|------|:--------:|:--------:|:-------:|
-| Naive Bayes | Classical ML | 91.0% | 0.909 | — |
-| Logistic Regression | Classical ML | 91.8% | 0.917 | — |
-| Linear SVM | Classical ML | 92.6% | 0.925 | — |
-| **RadiSense (RoBERTa)** | **Transfer Learning** | **95.68%** | **0.9555** | **0.9946** |
+
+
+
 
 > RadiSense outperforms the best classical baseline (Linear SVM) by **+3.08% accuracy** and **+3.05% F1-Macro**.
 
@@ -197,6 +165,8 @@ Radical      AUC = 0.993  ██████████████████
 Actual Neutral   734      11       5
    Non-Radical    14     695      16
       Radical     13      29     519
+
+<img width="2115" height="594" alt="image" src="https://github.com/user-attachments/assets/aaf53a35-617b-47ed-abed-6c0b30cf8498" />
 ```
 *Diagonal values represent correct predictions. The highest off-diagonal error (29) is Radical→Non-Radical, reflecting the challenge of distinguishing aggressive social speech from genuine extremist ideology.*
 
@@ -306,20 +276,7 @@ The full training pipeline runs end-to-end in the Colab notebook. Here is a summ
 ```
 
 ### Hyperparameter Configuration
-
-| Parameter | Value | Justification |
-|-----------|:-----:|---------------|
-| Model | RoBERTa-base | Superior to BERT-base; best classification benchmark scores |
-| Parameters | ~125M | Pre-trained on BookCorpus + Wikipedia + CC-News (160GB) |
-| Vocab (BPE) | 50,265 | Handles OOV; encodes extremist slang subword-level |
-| Max Length | 128 | Covers >95% of samples; longer lengths quadratically increase cost |
-| Epochs | 3 | Transfer learning converges fast; more = overfitting |
-| Learning Rate | 2e-5 | Standard from RoBERTa paper for fine-tuning |
-| Batch Size | 16 | GPU memory / gradient quality balance |
-| Weight Decay | 0.01 | L2 regularisation via AdamW |
-| Warmup Steps | 500 | Stabilises early training with random classification head |
-| Dropout | 0.1 | Original RoBERTa architectural dropout |
-| FP16 | True (GPU) | 2-3× speedup; half memory usage |
+<img width="1667" height="827" alt="image" src="https://github.com/user-attachments/assets/c5530731-e2e5-4579-bc5a-d36088b9f976" />
 
 ---
 
@@ -340,18 +297,10 @@ Input Text
     └── Coefficients = word importance scores
               ├── Positive → pushes toward Radical class
               └── Negative → pushes away from Radical class
-```
-
-**Example — Input:** *"We will destroy the enemies and reclaim our glory under the banner of god."*
 
 ```
-glory    ████████████████████████████  +0.104  → strong Radical signal
-enemies  ███████████████████████████   +0.100  → us-vs-them framing
-banner   █████████████████████         +0.084  → ideological structure
-will     █████████████████████         +0.082  → agency/intent
-under    ████████████████              +0.067  → structural marker
-reclaim  ████████████████              +0.066  → reclamation narrative
-god      ████                          -0.021  → suppresses (common in Non-Radical)
+<img width="756" height="570" alt="image" src="https://github.com/user-attachments/assets/22497ed0-ba7d-4a55-92f5-4f0ee9dd88d7" />
+
 ```
 
 *The model attends to combinations of violent agency words + reclamation narrative + ideological structure — not isolated religious vocabulary.*
@@ -416,31 +365,6 @@ wordcloud==1.9.3
 
 </div>
 
----
-
-## 📊 Generated Outputs
-
-Running the full notebook produces the following artefacts in `./plots/`:
-
-| Plot | Description |
-|------|-------------|
-| `eda_overview.png` | 6-panel EDA: class distribution bar/pie, char length histogram, word count boxplot, top-15 terms, source breakdown |
-| `wordclouds.png` | Word clouds per class (Neutral=greens, Non-Radical=ambers, Radical=reds) |
-| `top_words_per_class.png` | Top-15 distinctive terms for each class individually |
-| `kde_distributions.png` | KDE density curves for character length and word count by class |
-| `training_curves_roberta.png` | Training loss per step, validation loss per epoch, validation accuracy & F1 per epoch |
-| `confusion_matrix_roberta.png` | Raw counts + normalised percentage confusion matrices |
-| `roc_auc_roberta.png` | ROC-AUC curves (One-vs-Rest) for all 3 classes |
-| `pr_curve_roberta.png` | Precision-Recall curves for all 3 classes |
-| `per_class_metrics_roberta.png` | Grouped bar chart: Precision, Recall, F1 per class |
-| `confusion_matrix_baselines.png` | Side-by-side confusion matrices for LR, NB, SVM |
-| `model_comparison.png` | Bar chart comparison: all models on Accuracy and F1-Macro |
-| `radar_comparison.png` | Radar/spider chart: multi-metric model comparison |
-| `lime_explanation.png` | LIME word importance bar chart for Radical class |
-| `inference_probabilities.png` | Class probability distribution for 7 test-case inputs |
-
----
-
 ## ⚠️ Limitations & Ethics
 
 - **Monolingual:** English-dominant; Arabic script is removed during preprocessing
@@ -466,13 +390,6 @@ Running the full notebook produces the following artefacts in `./plots/`:
 
 <div align="center">
 
-| | Saakshi Sharma | Hiteshwari Purohit |
-|--|:--:|:--:|
-| **Roll No.** | 17 | 70 |
-| **Email** | saakshi.sharma@example.edu | hiteshwari.purohit@example.edu |
-
-*Department of Computer Science and Engineering*  
-*NLP Project — 2024*
 
 </div>
 
@@ -484,24 +401,5 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ---
 
-## 🙏 Acknowledgements
 
-- [Facebook AI Research](https://ai.facebook.com/) for the pre-trained [RoBERTa](https://huggingface.co/roberta-base) model
-- [HuggingFace](https://huggingface.co/) for the Transformers library and model hub
-- [Marco Tulio Ribeiro et al.](https://arxiv.org/abs/1602.04938) for the LIME framework
-- [Streamlit](https://streamlit.io/) for the frictionless deployment platform
-- [Google Colab](https://colab.research.google.com/) for free T4 GPU compute
 
----
-
-<div align="center">
-
-**⭐ If RadiSense helped you, please star the repository!**
-
-[![GitHub stars](https://img.shields.io/github/stars/YOUR_USERNAME/radisense?style=social)](https://github.com/YOUR_USERNAME/radisense)
-
-<br/>
-
-*Built with ❤️ using RoBERTa, PyTorch, and Streamlit*
-
-</div>
