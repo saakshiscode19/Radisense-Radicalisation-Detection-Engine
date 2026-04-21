@@ -32,7 +32,7 @@
 - [Explainability — LIME](#-explainability--lime)
 - [Streamlit Deployment](#-streamlit-deployment)
 - [Tech Stack](#-tech-stack)
-- [Authors](#-authors)
+
 
 ---
 
@@ -386,12 +386,7 @@ wordcloud==1.9.3
 
 ---
 
-## 👩‍💻 Authors
 
-<div align="center">
-
-
-</div>
 
 ---
 
